@@ -1,0 +1,17 @@
+<%- include('../partials/header') %>
+
+<section class="hero">
+  <h1>Compara precios en <span>RD</span></h1>
+  <p>Encuentra el mejor precio entre Jumbo, Nacional, La Sirena y más.</p>
+  <form class="search-form" action="/search" method="GET">
+    <input type="text" name="q" placeholder="¿Qué producto buscas?" required />
+    <button type="submit">🔍 Comparar precios</button>
+  </form>
+  <div class="stores-logos">
+    <span>Jumbo</span>
+    <span>Nacional</span>
+    <span>La Sirena</span>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

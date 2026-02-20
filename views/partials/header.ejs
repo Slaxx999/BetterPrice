@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %> | BetterPrice</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">💰 BetterPrice</a>
+    <form class="navbar-search" action="/search" method="GET">
+      <input type="text" name="q" placeholder="Buscar producto..." value="<%= typeof query !== 'undefined' ? query : '' %>"/>
+      <button type="submit">Buscar</button>
+    </form>
+    <div class="navbar-links">
+      <% if (typeof session !== 'undefined' && session.userId) { %>
+        <span>Hola, <%= session.userName %></span>
+        <a href="/alerts">Mis Alertas</a>
+        <a href="/auth/logout">Salir</a>
+      <% } else { %>
+        <a href="/auth/login">Iniciar Sesión</a>
+        <a href="/auth/register">Registrarse</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <% if (typeof messages !== 'undefined') { %>
+    <% if (messages.success && messages.success.length > 0) { %>
+      <div class="alert alert-success"><%= messages.success[0] %></div>
+    <% } %>
+    <% if (messages.error && messages.error.length > 0) { %>
+      <div class="alert alert-error"><%= messages.error[0] %></div>
+    <% } %>
+  <% } %>
+
+  <main class="container">

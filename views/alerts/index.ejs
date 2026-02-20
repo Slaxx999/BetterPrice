@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+
+<h2>Mis Alertas de Precio</h2>
+
+<% if (alerts.length === 0) { %>
+  <div class="no-results">
+    <p>No tienes alertas activas.</p>
+    <a href="/">Buscar productos</a>
+  </div>
+<% } else { %>
+  <div class="alerts-list">
+    <% alerts.forEach(alert => { %>
+      <div class="alert-card">
+        <div class="alert-info">
+          <% if (alert.Product.image) { %>
+            <img src="<%= alert.Product.image %>" alt="<%= alert.Product.name %>"/>
+          <% } %>
+          <div>
+            <strong><%= alert.Product.name %></strong>
+            <span class="store-tag"><%= alert.Product.Store.name %></span>
+            <p>Precio actual: <strong>RD$ <%= parseFloat(alert.Product.price).toFixed(2) %></strong></p>
+            <p>Tu objetivo: <strong class="target">RD$ <%= parseFloat(alert.targetPrice).toFixed(2) %></strong></p>
+            <span class="status <%= alert.active ? 'active' : 'inactive' %>">
+              <%= alert.active ? '🔔 Activa' : '✅ Enviada' %>
+            </span>
+          </div>
+        </div>
+        <form action="/alerts/<%= alert.id %>/delete" method="POST">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>
