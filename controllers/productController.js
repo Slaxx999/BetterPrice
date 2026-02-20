@@ -5,7 +5,13 @@ const scrapeAll = require('../scrapers/index');
 
 const productController = {
   async home(req, res) {
-    res.render('products/home', { title: 'BetterPrice', query: '' });
+    const products = await Product.findAll({
+      include: Store,
+      order: [['updatedAt', 'DESC']],
+      limit: 40,
+    });
+    const grouped = groupByProduct(products);
+    res.render('products/home', { title: 'BetterPrice', query: '', grouped });
   },
 
   async search(req, res) {

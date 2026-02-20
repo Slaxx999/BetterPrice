@@ -1,17 +1,76 @@
 <%- include('../partials/header') %>
 
+<!-- Hero / Buscador -->
 <section class="hero">
   <h1>Compara precios en <span>RD</span></h1>
-  <p>Encuentra el mejor precio entre Jumbo, Nacional, La Sirena y más.</p>
+  <p>Encuentra el mejor precio entre Jumbo, Nacional y Sirena.</p>
   <form class="search-form" action="/search" method="GET">
-    <input type="text" name="q" placeholder="¿Qué producto buscas?" required />
+    <input type="text" name="q" placeholder="¿Qué producto buscas? Ej: arroz, leche, aceite..." required />
     <button type="submit">🔍 Comparar precios</button>
   </form>
   <div class="stores-logos">
-    <span>Jumbo</span>
-    <span>Nacional</span>
-    <span>La Sirena</span>
+    <span>🔴 Jumbo</span>
+    <span>🟢 Nacional</span>
+    <span>🔵 Sirena</span>
   </div>
 </section>
+
+<!-- Productos en DB -->
+<% if (grouped.length > 0) { %>
+  <div class="home-products">
+    <h2 class="section-title">Productos recientes</h2>
+    <div class="results-grid">
+      <% grouped.forEach(group => { %>
+        <div class="product-group">
+          <h3 class="product-group-title"><%= group[0].name %></h3>
+          <div class="stores-comparison">
+            <% group.sort((a, b) => a.price - b.price).forEach((product, index) => { %>
+              <div class="store-card <%= index === 0 ? 'best-price' : '' %>">
+                <% if (index === 0) { %><span class="badge">Mejor Precio</span><% } %>
+                <% if (product.image) { %>
+                  <img src="<%= product.image %>" alt="<%= product.name %>" onerror="this.style.display='none'" />
+                <% } %>
+                <div class="store-info">
+                  <span class="store-name"><%= product.Store.name %></span>
+                  <span class="price">RD$ <%= parseFloat(product.price).toFixed(2) %></span>
+                </div>
+                <div class="store-actions">
+                  <a href="<%= product.url %>" target="_blank" class="btn-ver">Ver en tienda</a>
+                  <% if (typeof session !== 'undefined' && session.userId) { %>
+                    <button class="btn-alerta" onclick="openAlertModal(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>', <%= product.price %>)">
+                      🔔 Crear alerta
+                    </button>
+                  <% } else { %>
+                    <a href="/auth/login" class="btn-alerta">🔔 Crear alerta</a>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+<% } else { %>
+  <div class="no-results">
+    <p>🔍 Busca un producto arriba para ver comparativas de precios.</p>
+  </div>
+<% } %>
+
+<!-- Modal para crear alerta -->
+<div id="alertModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Crear Alerta de Precio</h3>
+    <p id="modal-product-name"></p>
+    <p>Precio actual: <strong id="modal-current-price"></strong></p>
+    <form action="/alerts" method="POST">
+      <input type="hidden" name="productId" id="modal-product-id"/>
+      <label>Avísame cuando el precio baje de:</label>
+      <input type="number" name="targetPrice" step="0.01" min="1" required />
+      <button type="submit">Guardar Alerta</button>
+      <button type="button" onclick="closeAlertModal()">Cancelar</button>
+    </form>
+  </div>
+</div>
 
 <%- include('../partials/footer') %>
